@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+
+        <variable
+            name="controller"
+            type="com.caoyang.news.controllers.MainActivityController" />
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context="com.caoyang.news.activitys.MainActivity">
+
+        <FrameLayout
+            android:id="@+id/fragment_tab_vp"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="6" />
+
+        <FrameLayout
+            android:id="@+id/fragment_button"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+    </LinearLayout>
+</layout>
