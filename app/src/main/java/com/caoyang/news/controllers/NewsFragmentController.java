@@ -3,6 +3,7 @@ package com.caoyang.news.controllers;
 import android.content.Intent;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Toast;
 
@@ -45,6 +46,21 @@ public class NewsFragmentController {
             @Override
             public void onRefresh() {
                 loadRssData();
+            }
+        });
+
+        binding.listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                if (firstVisibleItem == 0) {
+                    binding.swiper.setEnabled(true);
+                } else {
+                    binding.swiper.setEnabled(false);
+                }
             }
         });
 
