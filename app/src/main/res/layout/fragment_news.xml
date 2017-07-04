@@ -1,21 +1,30 @@
 <layout>
+
     <data>
+
         <variable
             name="controller"
-            type="com.caoyang.news.controllers.NewsFragmentController"/>
+            type="com.caoyang.news.controllers.NewsFragmentController" />
     </data>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:id="@+id/fragment_news"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="com.caoyang.news.fragments.NewsFragment">
-
-    <ListView
-        android:id="@+id/list_view"
+    <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/swiper"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-</LinearLayout>
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/fragment_news"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            tools:context="com.caoyang.news.fragments.NewsFragment">
+
+            <ListView
+                android:id="@+id/list_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
 </layout>

@@ -4,11 +4,11 @@ package com.caoyang.news.datas;
  * Created by caoyang on 17-6-29.
  */
 
-public class Data {
+public class RssDataItem {
 
     private String title,link,author,category,pubDate,comments,description;
 
-    public Data(String title, String link, String author, String category, String pubDate, String comments, String description) {
+    public RssDataItem(String title, String link, String author, String category, String pubDate, String comments, String description) {
         this.title = title;
         this.link = link;
         this.author = author;

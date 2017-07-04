@@ -1,41 +1,30 @@
 package com.caoyang.news.controllers;
 
 import android.content.Intent;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Toast;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
+import com.caoyang.news.Config;
 import com.caoyang.news.activitys.Main2Activity;
-import com.caoyang.news.activitys.adapters.Adapter;
+import com.caoyang.news.adapters.Adapter;
 import com.caoyang.news.databinding.FragmentNewsBinding;
-import com.caoyang.news.datas.Data;
+import com.caoyang.news.datas.RssDataItem;
 import com.caoyang.news.fragments.NewsFragment;
+import com.caoyang.news.rss.Reader;
+import com.caoyang.news.rss.ReaderError;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-
-import java.io.IOException;
-import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * Created by caoyang on 17-6-27.
  */
 
 public class NewsFragmentController {
-    private List<Data> list = new ArrayList<>();
+    private List<RssDataItem> list = new ArrayList<>();
     private final NewsFragment fragment;
     private final FragmentNewsBinding binding;
     private Adapter adapter;
@@ -45,94 +34,59 @@ public class NewsFragmentController {
     public NewsFragmentController(final NewsFragment fragment, FragmentNewsBinding binding) {
         this.fragment = fragment;
         this.binding = binding;
+        addListeners();
 
-        addList();
-        data();
-
-        itemOnClickListener(fragment, binding);
+        configAdapter();
+        loadRssData();
     }
 
-    private void itemOnClickListener(final NewsFragment fragment, FragmentNewsBinding binding) {
+    private void addListeners() {
+        binding.swiper.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadRssData();
+            }
+        });
+
         binding.listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(fragment.getContext(), Main2Activity.class);
-                String content_text = listContent.get(position);
-                intent.putExtra("data", content_text);
-
-                fragment.getContext().startActivity(intent);
+//                Intent intent = new Intent(fragment.getContext(), Main2Activity.class);
+//                String content_text = listContent.get(position);
+//                intent.putExtra("configAdapter", content_text);
+//
+//                fragment.getContext().startActivity(intent);
             }
         });
     }
 
-    private void addList() {
-        Volley.newRequestQueue(fragment.getContext()).add(new StringRequest("http://news.qq.com/newsgn/rss_newsgn.xml", new Response.Listener<String>() {
-
+    private void loadRssData() {
+        binding.swiper.setRefreshing(true);
+        Reader.loadRss(fragment.getContext(), Config.RSS_SOURCE, new Reader.OnSuccessCallback() {
             @Override
-            public void onResponse(String response) {
+            public void onSuccess(List<RssDataItem> rssData) {
+                binding.swiper.setRefreshing(false);
 
-//            System.out.println("===========Response" + response);
-
-                try {
-
-                    Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(response)));
-
-                    NodeList items = document.getElementsByTagName("item");
-
-                    for (int i = 0; i < items.getLength(); i++) {
-                        Node NodeItem = items.item(i);
-
-                        NodeList childNodes = NodeItem.getChildNodes();
-                        Map<String, String> map = new HashMap<>();
-                        Node node;
-                        for (int j = 0; j < childNodes.getLength(); j++) {
-                            node = childNodes.item(j);
-                            if (!node.getNodeName().equals("#text")) {
-                                map.put(node.getNodeName(), node.getTextContent().trim());
-                            }
-
-                        }
-
-                        list.add(new Data(
-                                map.get("title"),
-                                map.get("link"),
-                                map.get("author"),
-                                map.get("category"),
-                                map.get("pubDate"),
-                                map.get("comments"),
-                                map.get("description")));
-                        for (int h = 0; h < list.size(); h++) {
-                            String title = list.get(h).getTitle();
-                            String description = list.get(h).getDescription();
-                            listString.add(title);
-                            listContent.add(description);
-                        }
-
-                    }
-
-                } catch (SAXException | IOException | ParserConfigurationException e) {
-                    e.printStackTrace();
-
-                }
-
+                adapter.clear();
+                adapter.addAll(rssData);
             }
-        }, new Response.ErrorListener() {
+        }, new Reader.OnFailCallback() {
             @Override
-            public void onErrorResponse(VolleyError error) {
-
+            public void onFail(ReaderError error) {
+                binding.swiper.setRefreshing(false);
+                Toast.makeText(fragment.getContext(), "加载数据失败", Toast.LENGTH_SHORT).show();
             }
-        }));
-//
+        });
     }
 
-    private void data() {
-        adapter = new Adapter(listString, fragment.getContext(), listContent);
+    private void configAdapter() {
+        adapter = new Adapter(fragment.getContext());
         binding.listView.setAdapter(adapter);
     }
 
     private StringRequest stringRequest = null;
 
-    public List<Data> getList() {
+    public List<RssDataItem> getList() {
         return list;
     }
 }

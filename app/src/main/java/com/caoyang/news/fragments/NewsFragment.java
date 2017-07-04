@@ -28,7 +28,6 @@ private FragmentNewsBinding binding;
                              Bundle savedInstanceState) {
         binding = FragmentNewsBinding.inflate(inflater);
         binding.setController(new NewsFragmentController(this,binding));
-        Toast.makeText(getContext(), "onCreateView", Toast.LENGTH_SHORT).show();
         return binding.getRoot();
     }
 

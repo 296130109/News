@@ -1,4 +1,4 @@
-package com.caoyang.news.activitys.adapters;
+package com.caoyang.news.adapters;
 
 import android.support.v4.app.Fragment;
 import android.content.Context;
@@ -10,8 +10,10 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.caoyang.news.R;
+import com.caoyang.news.datas.RssDataItem;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,26 +21,23 @@ import java.util.List;
  */
 
 public class Adapter extends BaseAdapter {
-    private List<String> listString;
     private Context context;
     private Fragment fragment;
-    private List<String> listContent;
+    private List<RssDataItem> rssData = new ArrayList<>();
 
-    public Adapter(List<String> list, Context context,List<String> listContent) {
-        this.listString = list;
+    public Adapter(Context context) {
         this.context = context;
-        this.listContent = listContent;
     }
 
 
     @Override
     public int getCount() {
-        return listString.size();
+        return rssData.size();
     }
 
     @Override
-    public Object getItem(int position) {
-        return listString.get(position);
+    public RssDataItem getItem(int position) {
+        return rssData.get(position);
     }
 
     @Override
@@ -56,9 +55,26 @@ public class Adapter extends BaseAdapter {
         }
 
         Holder holder = (Holder) convertView.getTag();
-        holder.text.setText(listString.get(position));
+
+        RssDataItem rssData = getItem(position);
+        holder.text.setText(rssData.getTitle());
 
         return convertView;
+    }
+
+    public void add(RssDataItem item) {
+        rssData.add(item);
+        notifyDataSetChanged();
+    }
+
+    public void addAll(List<RssDataItem> items) {
+        rssData.addAll(items);
+        notifyDataSetChanged();
+    }
+
+    public void clear(){
+        rssData.clear();
+        notifyDataSetChanged();
     }
 
     class Holder {
